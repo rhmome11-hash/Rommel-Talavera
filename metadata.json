@@ -1,0 +1,6 @@
+{
+  "name": "TattooStudio Pro",
+  "description": "Gestión profesional para estudio de tatuajes, piercing y láser con ranking de clientes, agenda y finanzas.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
