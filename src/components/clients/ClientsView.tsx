@@ -76,20 +76,20 @@ export const ClientsView: React.FC = () => {
   return (
     <div className="space-y-6 pb-24">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/90 border border-zinc-800 p-4 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-purple-950 border border-purple-500/40 text-purple-300">
+          <div className="p-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-purple-400">
             <Trophy className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-white">{t('clientsTitle')}</h2>
+            <h2 className="text-lg font-bold text-white">{t('clientsTitle')}</h2>
             <p className="text-xs text-zinc-400">Total: {clients.length} clientes registrados</p>
           </div>
         </div>
 
         <button
           onClick={() => setIsClientModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-950/50 active:scale-95 transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-all active:scale-95"
         >
           <UserPlus className="w-4 h-4" />
           <span>{t('btnAddClient')}</span>
@@ -97,11 +97,11 @@ export const ClientsView: React.FC = () => {
       </div>
 
       {/* TOP CLIENTS RANKING SECTION */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-purple-950/30 to-zinc-950 border border-purple-500/30 p-5 shadow-2xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-purple-500/20">
+      <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
           <div className="flex items-center gap-2">
-            <Crown className="w-5 h-5 text-amber-400 animate-bounce" />
-            <h3 className="text-base font-black text-white uppercase tracking-wider">
+            <Crown className="w-5 h-5 text-amber-400" />
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
               {t('topClientsHeading')}
             </h3>
           </div>
@@ -109,7 +109,7 @@ export const ClientsView: React.FC = () => {
           {/* Ranking Filters */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Metric Filter */}
-            <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-semibold">
+            <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-medium">
               <button
                 onClick={() => setMetric('spent')}
                 className={`px-2.5 py-1 rounded-lg transition-all ${
@@ -137,7 +137,7 @@ export const ClientsView: React.FC = () => {
             </div>
 
             {/* Time Period Filter */}
-            <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-semibold">
+            <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-medium">
               <button
                 onClick={() => setPeriod('all')}
                 className={`px-2.5 py-1 rounded-lg transition-all ${
@@ -174,12 +174,12 @@ export const ClientsView: React.FC = () => {
               <div
                 key={item.client.id}
                 onClick={() => setSelectedClientId(item.client.id)}
-                className={`relative p-4 rounded-xl border bg-zinc-900/90 hover:bg-zinc-900 transition-all cursor-pointer group shadow-xl ${
+                className={`p-4 rounded-xl border bg-zinc-950/60 hover:bg-zinc-950 transition-all cursor-pointer group ${
                   item.rank === 1
-                    ? 'border-amber-500/50 shadow-amber-950/20 ring-1 ring-amber-500/30'
+                    ? 'border-amber-500/40'
                     : item.rank === 2
-                    ? 'border-slate-400/40'
-                    : 'border-amber-700/40'
+                    ? 'border-zinc-400/30'
+                    : 'border-amber-700/30'
                 }`}
               >
                 <div className="flex items-start justify-between">
@@ -190,14 +190,14 @@ export const ClientsView: React.FC = () => {
                         `https://api.dicebear.com/7.x/bottts/svg?seed=${item.client.name}`
                       }
                       alt={item.client.name}
-                      className="w-12 h-12 rounded-xl object-cover border-2 border-purple-500/40 shadow-md group-hover:scale-105 transition-transform"
+                      className="w-11 h-11 rounded-xl object-cover border border-zinc-800 group-hover:scale-105 transition-transform"
                     />
                     <div>
                       <h4 className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">
                         {item.client.name}
                       </h4>
                       {item.client.instagram && (
-                        <p className="text-[11px] text-purple-400 font-medium">
+                        <p className="text-[11px] text-zinc-400 font-medium">
                           {item.client.instagram}
                         </p>
                       )}
@@ -205,17 +205,17 @@ export const ClientsView: React.FC = () => {
                   </div>
 
                   {/* Medal position badge */}
-                  <div className={`p-2 rounded-xl border flex items-center justify-center ${badge.bg}`}>
+                  <div className={`p-1.5 rounded-lg border flex items-center justify-center ${badge.bg}`}>
                     {badge.icon}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-zinc-800 text-xs">
+                <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-zinc-800/80 text-xs">
                   <div>
                     <span className="text-zinc-500 block text-[10px] uppercase font-bold">
                       {t('totalSpentLabel')}
                     </span>
-                    <span className="text-sm font-black text-emerald-400">
+                    <span className="text-sm font-bold text-emerald-400">
                       {formatMoney(item.totalSpent)}
                     </span>
                   </div>
@@ -223,7 +223,7 @@ export const ClientsView: React.FC = () => {
                     <span className="text-zinc-500 block text-[10px] uppercase font-bold">
                       {t('totalVisitsLabel')}
                     </span>
-                    <span className="text-sm font-bold text-zinc-200">
+                    <span className="text-xs font-semibold text-zinc-200">
                       {item.totalVisits} sesiones
                     </span>
                   </div>

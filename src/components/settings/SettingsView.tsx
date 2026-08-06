@@ -13,7 +13,8 @@ import {
   Plus,
   Trash2,
   Sparkles,
-  Palette
+  Palette,
+  Smartphone
 } from 'lucide-react';
 import { ServiceType } from '../../types';
 
@@ -244,6 +245,55 @@ export const SettingsView: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* PWA / APK Installation Card */}
+      <div className="bg-zinc-900 border border-purple-500/30 rounded-2xl p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-purple-400" />
+            <span>Instalar Aplicación Móvil (Android / iOS / APK)</span>
+          </h3>
+          <span className="px-2.5 py-0.5 rounded-full bg-purple-950 border border-purple-500/40 text-[10px] font-bold text-purple-300">
+            PWA & APK Listo
+          </span>
+        </div>
+
+        <p className="text-xs text-zinc-300 leading-relaxed">
+          Esta aplicación web está totalmente optimizada como <strong>Progressive Web App (PWA)</strong>. Puedes instalarla directamente en tu teléfono móvil Android como si fuera una App nativa de la Google Play Store.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
+            <div className="flex items-center gap-2 font-bold text-purple-300">
+              <Download className="w-4 h-4 text-purple-400" />
+              <span>Opción 1: Instalación Directa (PWA)</span>
+            </div>
+            <p className="text-zinc-400 text-[11px]">
+              En tu navegador (Chrome o Samsung Internet en Android):
+            </p>
+            <ol className="list-decimal list-inside text-zinc-300 text-[11px] space-y-1 pl-1">
+              <li>Abre el menú de 3 puntos (⋮) de Chrome.</li>
+              <li>Selecciona <strong>"Añadir a la pantalla de inicio"</strong> o <strong>"Instalar aplicación"</strong>.</li>
+              <li>Aparecerá el icono de TattooStudio Pro en el menú de aplicaciones de tu móvil.</li>
+            </ol>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2">
+            <div className="flex items-center gap-2 font-bold text-indigo-300">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <span>Opción 2: Convertir a APK Móvil</span>
+            </div>
+            <p className="text-zinc-400 text-[11px]">
+              Si necesitas el archivo ejecutable <strong>.APK</strong> para instalarlo manualmente:
+            </p>
+            <ol className="list-decimal list-inside text-zinc-300 text-[11px] space-y-1 pl-1">
+              <li>Copia la dirección URL de esta app.</li>
+              <li>Entra gratis en <strong>pwabuilder.com</strong> desde cualquier dispositivo.</li>
+              <li>Pega la dirección URL y haz clic en <strong>"Generate Android APK"</strong> para descargar tu archivo .apk listo para instalar.</li>
+            </ol>
+          </div>
         </div>
       </div>
 

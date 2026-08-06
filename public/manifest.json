@@ -1,0 +1,18 @@
+{
+  "short_name": "TattooStudio",
+  "name": "TattooStudio Pro",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512 192x192 64x64 32x32"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "description": "Gestión profesional para estudio de tatuajes, piercing y láser."
+}

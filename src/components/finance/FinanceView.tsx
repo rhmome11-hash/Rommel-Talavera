@@ -79,13 +79,13 @@ export const FinanceView: React.FC = () => {
   return (
     <div className="space-y-6 pb-24">
       {/* Finance Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/90 border border-zinc-800 p-4 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-emerald-950 border border-emerald-500/40 text-emerald-300">
+          <div className="p-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-emerald-400">
             <Wallet className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-white">{t('financeTitle')}</h2>
+            <h2 className="text-lg font-bold text-white">{t('financeTitle')}</h2>
             <p className="text-xs text-zinc-400">Control de ingresos, gastos y bonos</p>
           </div>
         </div>
@@ -93,7 +93,7 @@ export const FinanceView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsVoucherModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-purple-300 font-bold text-xs transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-purple-300 font-semibold text-xs transition-all"
           >
             <Gift className="w-4 h-4 text-purple-400" />
             <span>Crear Bono</span>
@@ -101,7 +101,7 @@ export const FinanceView: React.FC = () => {
 
           <button
             onClick={() => setIsTransactionModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-950/40 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>{t('newTransaction')}</span>
@@ -112,43 +112,43 @@ export const FinanceView: React.FC = () => {
       {/* Financial Summary Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Gross Income */}
-        <div className="bg-zinc-900/90 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
           <div>
             <span className="text-xs text-zinc-400 font-medium">{t('summaryGross')}</span>
-            <div className="text-2xl font-black text-emerald-400 mt-1">
+            <div className="text-2xl font-bold text-emerald-400 mt-1">
               {formatMoney(totalIncome)}
             </div>
           </div>
-          <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400">
-            <TrendingUp className="w-6 h-6" />
+          <div className="p-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-emerald-400">
+            <TrendingUp className="w-5 h-5" />
           </div>
         </div>
 
         {/* Total Expenses */}
-        <div className="bg-zinc-900/90 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
           <div>
             <span className="text-xs text-zinc-400 font-medium">{t('summaryExpenses')}</span>
-            <div className="text-2xl font-black text-red-400 mt-1">
+            <div className="text-2xl font-bold text-red-400 mt-1">
               {formatMoney(totalExpense)}
             </div>
           </div>
-          <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/40 text-red-400">
-            <TrendingDown className="w-6 h-6" />
+          <div className="p-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-red-400">
+            <TrendingDown className="w-5 h-5" />
           </div>
         </div>
 
         {/* Net Profit */}
-        <div className="bg-zinc-900/90 border border-purple-500/30 p-4 rounded-2xl flex items-center justify-between shadow-lg bg-gradient-to-br from-zinc-900 to-purple-950/30">
+        <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl flex items-center justify-between">
           <div>
-            <span className="text-xs text-purple-300 font-bold uppercase tracking-wider">
+            <span className="text-xs text-purple-400 font-semibold uppercase tracking-wider">
               {t('summaryNet')}
             </span>
-            <div className="text-2xl font-black text-purple-200 mt-1">
+            <div className="text-2xl font-bold text-purple-200 mt-1">
               {formatMoney(netProfit)}
             </div>
           </div>
-          <div className="p-3 rounded-xl bg-purple-950/90 border border-purple-500/50 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-            <BarChart3 className="w-6 h-6" />
+          <div className="p-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-purple-400">
+            <BarChart3 className="w-5 h-5" />
           </div>
         </div>
       </div>
