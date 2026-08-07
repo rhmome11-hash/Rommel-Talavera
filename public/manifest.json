@@ -1,11 +1,18 @@
 {
+  "id": "tattoostudio-pro-app",
   "short_name": "TattooStudio",
   "name": "TattooStudio Pro",
   "icons": [
     {
       "src": "/icon.svg",
       "type": "image/svg+xml",
-      "sizes": "512x512 192x192 64x64 32x32"
+      "sizes": "512x512"
+    },
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",

@@ -13,15 +13,27 @@ import {
   Calendar,
   CreditCard,
   Trash2,
-  PieChart
+  PieChart,
+  Trophy,
+  Crown,
+  Medal,
+  Award,
+  Users,
+  ChevronRight,
+  CalendarDays,
+  Sparkles
 } from 'lucide-react';
-import { TransactionType } from '../../types';
+import { TransactionType, RankingMetric, RankingPeriod } from '../../types';
+import { computeClientRankings } from '../../utils/ranking';
 
 export const FinanceView: React.FC = () => {
   const {
     transactions,
     recurring,
     vouchers,
+    appointments,
+    clients,
+    setSelectedClientId,
     setIsTransactionModalOpen,
     setIsVoucherModalOpen,
     toggleRecurringPaid,
@@ -34,6 +46,10 @@ export const FinanceView: React.FC = () => {
   const [subTab, setSubTab] = useState<'transactions' | 'analytics' | 'recurring' | 'vouchers'>('transactions');
   const [filterType, setFilterType] = useState<'All' | 'Income' | 'Expense'>('All');
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Analytics Ranking Filters
+  const [rankingMetric, setRankingMetric] = useState<RankingMetric>('spent');
+  const [rankingPeriod, setRankingPeriod] = useState<RankingPeriod>('all');
 
   // Voucher redeem state
   const [redeemVoucherId, setRedeemVoucherId] = useState<string | null>(null);
@@ -66,6 +82,88 @@ export const FinanceView: React.FC = () => {
     .forEach((t) => {
       categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + t.amount;
     });
+
+  // Calculate Appointment Metrics (Week, Month, Year, Total)
+  const parseLocalDate = (dateStr: string) => {
+    if (!dateStr) return new Date();
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+  };
+
+  const now = new Date();
+  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // Week bounds (Monday to Sunday)
+  const dayOfWeek = todayLocal.getDay();
+  const daysSinceMonday = (dayOfWeek + 6) % 7;
+  const monday = new Date(todayLocal);
+  monday.setDate(todayLocal.getDate() - daysSinceMonday);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+
+  const weekAppointments = appointments.filter((a) => {
+    if (!a.date) return false;
+    const d = parseLocalDate(a.date);
+    return d >= monday && d <= sunday;
+  });
+
+  const monthAppointments = appointments.filter((a) => {
+    if (!a.date) return false;
+    const d = parseLocalDate(a.date);
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  });
+
+  const yearAppointments = appointments.filter((a) => {
+    if (!a.date) return false;
+    const d = parseLocalDate(a.date);
+    return d.getFullYear() === now.getFullYear();
+  });
+
+  const weekCompleted = weekAppointments.filter((a) => a.status === 'Completed').length;
+  const monthCompleted = monthAppointments.filter((a) => a.status === 'Completed').length;
+  const yearCompleted = yearAppointments.filter((a) => a.status === 'Completed').length;
+
+  const weekValue = weekAppointments.reduce((acc, a) => acc + (a.price || 0), 0);
+  const monthValue = monthAppointments.reduce((acc, a) => acc + (a.price || 0), 0);
+  const yearValue = yearAppointments.reduce((acc, a) => acc + (a.price || 0), 0);
+
+  // Compute Client Rankings for Analytics
+  const rankedClients = computeClientRankings(
+    clients,
+    appointments,
+    transactions,
+    rankingMetric,
+    rankingPeriod
+  );
+
+  const getRankBadge = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return {
+          bg: 'bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 text-zinc-950 border-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.4)]',
+          icon: <Crown className="w-4 h-4 text-zinc-950 fill-zinc-950" />,
+          label: '1º LUGAR'
+        };
+      case 2:
+        return {
+          bg: 'bg-gradient-to-br from-slate-300 via-slate-400 to-slate-600 text-zinc-950 border-slate-200',
+          icon: <Award className="w-4 h-4 text-zinc-950" />,
+          label: '2º LUGAR'
+        };
+      case 3:
+        return {
+          bg: 'bg-gradient-to-br from-amber-700 via-amber-800 to-amber-950 text-amber-200 border-amber-600/60',
+          icon: <Medal className="w-4 h-4 text-amber-300" />,
+          label: '3º LUGAR'
+        };
+      default:
+        return {
+          bg: 'bg-zinc-800 text-zinc-300 border-zinc-700',
+          icon: <span className="font-bold text-xs">#{rank}</span>,
+          label: `#${rank}`
+        };
+    }
+  };
 
   const handleRedeem = (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,33 +364,266 @@ export const FinanceView: React.FC = () => {
       {/* Sub-tab 2: Analytics */}
       {subTab === 'analytics' && (
         <div className="space-y-6">
+          {/* APPOINTMENT VOLUME ANALYTICS (Semana, Mes, Año, Total) */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="w-5 h-5 text-purple-400" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Volumen y Estadísticas de Citas
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Esta Semana */}
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl space-y-2 relative overflow-hidden group hover:border-purple-500/40 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-zinc-400">Citas esta Semana</span>
+                  <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-bold border border-purple-500/20">
+                    Semana
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-white">{weekAppointments.length}</span>
+                  <span className="text-xs text-zinc-400">citas</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-zinc-800/80">
+                  <span className="text-emerald-400 font-semibold">{weekCompleted} completadas</span>
+                  <span className="text-zinc-400 font-bold">{formatMoney(weekValue)}</span>
+                </div>
+              </div>
+
+              {/* Este Mes */}
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl space-y-2 relative overflow-hidden group hover:border-purple-500/40 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-zinc-400">Citas este Mes</span>
+                  <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-bold border border-indigo-500/20">
+                    Mes
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-white">{monthAppointments.length}</span>
+                  <span className="text-xs text-zinc-400">citas</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-zinc-800/80">
+                  <span className="text-emerald-400 font-semibold">{monthCompleted} completadas</span>
+                  <span className="text-zinc-400 font-bold">{formatMoney(monthValue)}</span>
+                </div>
+              </div>
+
+              {/* Este Año */}
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl space-y-2 relative overflow-hidden group hover:border-purple-500/40 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-zinc-400">Citas este Año</span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
+                    Año
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-white">{yearAppointments.length}</span>
+                  <span className="text-xs text-zinc-400">citas</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-zinc-800/80">
+                  <span className="text-emerald-400 font-semibold">{yearCompleted} completadas</span>
+                  <span className="text-zinc-400 font-bold">{formatMoney(yearValue)}</span>
+                </div>
+              </div>
+
+              {/* Total Histórico */}
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl space-y-2 relative overflow-hidden group hover:border-purple-500/40 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-zinc-400">Citas Totales</span>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold border border-amber-500/20">
+                    Histórico
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-black text-white">{appointments.length}</span>
+                  <span className="text-xs text-zinc-400">registradas</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-zinc-800/80">
+                  <span className="text-emerald-400 font-semibold">
+                    {appointments.filter((a) => a.status === 'Completed').length} completadas
+                  </span>
+                  <span className="text-zinc-400 font-bold">Total</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* DESGLOSE POR SERVICIO */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <PieChart className="w-4 h-4 text-purple-400" />
-              <span>Desglose de Ingresos por Servicio</span>
+              <span>Desglose de Ingresos por Categoría / Servicio</span>
             </h3>
 
-            <div className="space-y-3">
-              {Object.entries(categoryBreakdown).map(([cat, total]) => {
-                const percentage = totalIncome > 0 ? Math.round((total / totalIncome) * 100) : 0;
-                return (
-                  <div key={cat} className="space-y-1">
-                    <div className="flex justify-between text-xs font-bold text-zinc-300">
-                      <span>{cat}</span>
-                      <span className="text-emerald-400">
-                        {formatMoney(total)} ({percentage}%)
-                      </span>
+            {Object.keys(categoryBreakdown).length > 0 ? (
+              <div className="space-y-3">
+                {Object.entries(categoryBreakdown).map(([cat, total]) => {
+                  const percentage = totalIncome > 0 ? Math.round((total / totalIncome) * 100) : 0;
+                  return (
+                    <div key={cat} className="space-y-1">
+                      <div className="flex justify-between text-xs font-bold text-zinc-300">
+                        <span>{cat}</span>
+                        <span className="text-emerald-400">
+                          {formatMoney(total)} ({percentage}%)
+                        </span>
+                      </div>
+                      <div className="w-full bg-zinc-950 h-2.5 rounded-full overflow-hidden border border-zinc-800">
+                        <div
+                          className="bg-gradient-to-r from-purple-500 to-emerald-400 h-full rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-zinc-950 h-2.5 rounded-full overflow-hidden border border-zinc-800">
-                      <div
-                        className="bg-gradient-to-r from-purple-500 to-emerald-400 h-full rounded-full transition-all duration-500"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-500">No hay transacciones de ingreso registradas para mostrar el desglose.</p>
+            )}
+          </div>
+
+          {/* RANKING DE CLIENTES EN ANALÍTICAS */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-400" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  Ranking de Clientes (Analíticas)
+                </h3>
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Metric Filter */}
+                <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-medium">
+                  <button
+                    onClick={() => setRankingMetric('spent')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      rankingMetric === 'spent' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Mayor Gasto
+                  </button>
+                  <button
+                    onClick={() => setRankingMetric('visits')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      rankingMetric === 'visits' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Más Visitas
+                  </button>
+                  <button
+                    onClick={() => setRankingMetric('frequency')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      rankingMetric === 'frequency' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Más Frecuentes
+                  </button>
+                </div>
+
+                {/* Period Filter */}
+                <div className="flex items-center p-1 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-medium">
+                  <button
+                    onClick={() => setRankingPeriod('all')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      rankingPeriod === 'all' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Todos
+                  </button>
+                  <button
+                    onClick={() => setRankingPeriod('year')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      rankingPeriod === 'year' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Este Año
+                  </button>
+                  <button
+                    onClick={() => setRankingPeriod('month')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${
+                      rankingPeriod === 'month' ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    Este Mes
+                  </button>
+                </div>
+              </div>
             </div>
+
+            {/* Client Ranking List */}
+            {rankedClients.length > 0 ? (
+              <div className="space-y-2.5">
+                {rankedClients.map((item) => {
+                  const badge = getRankBadge(item.rank);
+                  return (
+                    <div
+                      key={item.client.id}
+                      onClick={() => setSelectedClientId(item.client.id)}
+                      className="bg-zinc-950/70 border border-zinc-800/80 hover:border-purple-500/40 rounded-2xl p-3.5 flex items-center justify-between gap-3 transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        {/* Rank Badge */}
+                        <div
+                          className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 ${badge.bg}`}
+                        >
+                          {badge.icon}
+                        </div>
+
+                        {/* Avatar */}
+                        <img
+                          src={
+                            item.client.avatarUrl ||
+                            `https://api.dicebear.com/7.x/bottts/svg?seed=${item.client.name}`
+                          }
+                          alt={item.client.name}
+                          className="w-10 h-10 rounded-xl object-cover border border-zinc-800 shrink-0"
+                        />
+
+                        {/* Name & Phone */}
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors truncate">
+                            {item.client.name}
+                          </h4>
+                          <div className="flex items-center gap-2 text-[11px] text-zinc-400">
+                            <span>{item.client.phone}</span>
+                            {item.client.instagram && (
+                              <span className="text-purple-400 truncate">{item.client.instagram}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="flex items-center gap-4 text-right shrink-0">
+                        <div>
+                          <span className="text-[10px] text-zinc-500 block uppercase font-bold">Total Invertido</span>
+                          <span className="text-sm font-black text-emerald-400">
+                            {formatMoney(item.totalSpent)}
+                          </span>
+                        </div>
+
+                        <div className="hidden sm:block">
+                          <span className="text-[10px] text-zinc-500 block uppercase font-bold">Citas</span>
+                          <span className="text-xs font-bold text-zinc-200">
+                            {item.totalVisits} visitas ({item.completedVisitsCount} completadas)
+                          </span>
+                        </div>
+
+                        <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs text-zinc-500 text-center py-4">
+                Aún no hay clientes registrados para mostrar en el ranking.
+              </p>
+            )}
           </div>
         </div>
       )}

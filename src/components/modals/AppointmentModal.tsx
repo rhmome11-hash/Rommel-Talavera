@@ -153,6 +153,30 @@ export const AppointmentModal: React.FC = () => {
             )}
           </div>
 
+          {/* Preset Services Quick Selector */}
+          {settings.services.length > 0 && (
+            <div className="space-y-1.5">
+              <label className="font-bold text-zinc-300 block text-[11px]">Servicios Registrados (Selección Rápida)</label>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+                {settings.services.map((srv) => (
+                  <button
+                    key={srv.id}
+                    type="button"
+                    onClick={() => {
+                      setServiceName(srv.name);
+                      setServiceType(srv.type);
+                      setPrice(String(srv.basePrice));
+                    }}
+                    className="px-2.5 py-1 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 hover:text-white text-[11px] font-medium shrink-0 transition-all flex items-center gap-1.5"
+                  >
+                    <span>{srv.name}</span>
+                    <span className="text-[10px] text-purple-400 font-bold">{settings.currencySymbol}{srv.basePrice}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Service & Type */}
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -162,21 +186,27 @@ export const AppointmentModal: React.FC = () => {
                 onChange={(e) => setServiceType(e.target.value as ServiceType)}
                 className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white outline-none focus:border-purple-500"
               >
+                <option value="Corte">Corte</option>
+                <option value="Barba">Barba</option>
+                <option value="Manicura">Manicura</option>
+                <option value="Pedicura">Pedicura</option>
                 <option value="Tattoo">Tatuaje</option>
+                <option value="Touch-up">Repaso</option>
                 <option value="Piercing">Piercing</option>
                 <option value="Laser">Láser</option>
-                <option value="Touch-up">Repaso</option>
+                <option value="Tratamiento">Tratamiento</option>
                 <option value="Consultation">Consulta</option>
+                <option value="Other">Otro</option>
               </select>
             </div>
 
             <div>
-              <label className="font-bold text-zinc-300 block mb-1">Detalle / Zona</label>
+              <label className="font-bold text-zinc-300 block mb-1">Detalle / Trabajo</label>
               <input
                 type="text"
                 value={serviceName}
                 onChange={(e) => setServiceName(e.target.value)}
-                placeholder="Ej. Fine Line Clavícula"
+                placeholder="Ej. Corte Fade / Manicura Gel"
                 className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white outline-none focus:border-purple-500"
                 required
               />

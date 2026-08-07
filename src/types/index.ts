@@ -1,4 +1,17 @@
-export type ServiceType = 'Tattoo' | 'Touch-up' | 'Piercing' | 'Laser' | 'Consultation' | 'Other';
+export type ProfessionType = 'tattoo' | 'barber' | 'nails' | 'piercing' | 'general';
+
+export type ServiceType = 
+  | 'Tattoo' 
+  | 'Touch-up' 
+  | 'Piercing' 
+  | 'Laser' 
+  | 'Consultation' 
+  | 'Corte' 
+  | 'Barba' 
+  | 'Manicura' 
+  | 'Pedicura' 
+  | 'Tratamiento' 
+  | 'Other';
 
 export type AppointmentStatus = 'Scheduled' | 'In Progress' | 'Completed' | 'Cancelled' | 'No Show';
 
@@ -33,7 +46,7 @@ export interface Client {
   avatarUrl?: string;
   firstVisitDate: string;
   notes?: string;
-  medicalNotes?: string; // Allergies, skin sensitivities
+  medicalNotes?: string; // Allergies, sensitivities, preferences
   photos: ClientPhoto[];
 }
 
@@ -59,7 +72,7 @@ export interface Transaction {
   concept: string;
   amount: number;
   date: string; // YYYY-MM-DD
-  category: string; // e.g., 'Tattoo Income', 'Piercing Income', 'Rent', 'Materials', 'Laser Maintenance'
+  category: string; // e.g., 'Ingreso Servicio', 'Alquiler', 'Materiales'
   paymentMethod: PaymentMethod;
   clientId?: string;
   appointmentId?: string;
@@ -90,6 +103,7 @@ export interface GiftVoucher {
 export interface StudioSettings {
   studioName: string;
   artistName: string;
+  profession: ProfessionType;
   currencySymbol: string;
   language: 'es' | 'en';
   notificationsEnabled: boolean;
@@ -97,7 +111,9 @@ export interface StudioSettings {
   workingDays: number[]; // 0=Sun, 1=Mon...
   dayOffs: string[]; // ['YYYY-MM-DD']
   services: ServiceItem[];
+  isOnboarded?: boolean;
 }
 
 export type RankingMetric = 'spent' | 'visits' | 'frequency';
 export type RankingPeriod = 'month' | 'year' | 'all';
+

@@ -13,6 +13,7 @@ import { ClientModal } from './components/modals/ClientModal';
 import { TransactionModal } from './components/modals/TransactionModal';
 import { VoucherModal } from './components/modals/VoucherModal';
 import { InstagramStoryModal } from './components/modals/InstagramStoryModal';
+import { OnboardingModal } from './components/modals/OnboardingModal';
 import { ToastContainer } from './components/ToastContainer';
 
 const MainContent: React.FC = () => {
@@ -31,6 +32,7 @@ const MainContent: React.FC = () => {
       </main>
 
       {/* Global Modals & Notifications */}
+      <OnboardingModal />
       <ClientDetailModal />
       <AppointmentModal />
       <ClientModal />

@@ -1,49 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useApp, TabType } from '../context/AppContext';
 import {
-  LayoutDashboard,
+  Sun,
   Calendar,
   Users,
   Wallet,
   Settings,
   Plus,
   Globe,
-  Sparkles,
-  Smartphone,
-  X,
-  Download
+  Sparkles
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const Navigation: React.FC = () => {
-  const { activeTab, setActiveTab, settings, updateSettings, setIsAppointmentModalOpen, t, showToast } = useApp();
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallGuideModal, setShowInstallGuideModal] = useState(false);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        showToast('¡App instalada correctamente!');
-      }
-      setDeferredPrompt(null);
-    } else {
-      setShowInstallGuideModal(true);
-    }
-  };
+  const { activeTab, setActiveTab, settings, updateSettings, setIsAppointmentModalOpen, t } = useApp();
 
   const navItems: { id: TabType; label: string; icon: React.ReactNode }[] = [
-    { id: 'today', label: t('tabToday'), icon: <LayoutDashboard className="w-5 h-5" /> },
+    { id: 'today', label: t('tabToday'), icon: <Sun className="w-5 h-5" /> },
     { id: 'calendar', label: t('tabCalendar'), icon: <Calendar className="w-5 h-5" /> },
     { id: 'clients', label: t('tabClients'), icon: <Users className="w-5 h-5" /> },
     { id: 'finance', label: t('tabFinance'), icon: <Wallet className="w-5 h-5" /> },
@@ -65,25 +38,15 @@ export const Navigation: React.FC = () => {
           </div>
           <div>
             <h1 className="text-sm font-bold text-zinc-100 tracking-wide flex items-center gap-2">
-              {settings.studioName || 'TattooStudio Pro'}
+              {settings.studioName || 'Mi Estudio'}
             </h1>
             <p className="text-[11px] text-zinc-400 font-medium">
-              {settings.artistName || 'Alex Viper Ramos'}
+              {settings.artistName || 'Profesional'}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Mobile Install App Button */}
-          <button
-            onClick={handleInstallClick}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-purple-950/80 border border-purple-500/40 text-purple-300 hover:text-white text-xs font-semibold transition-all shadow-sm"
-            title="Instalar App en el Móvil"
-          >
-            <Smartphone className="w-3.5 h-3.5 text-purple-400" />
-            <span className="hidden xs:inline">Instalar</span>
-          </button>
-
           {/* Language toggle button */}
           <button
             onClick={toggleLanguage}
@@ -104,56 +67,6 @@ export const Navigation: React.FC = () => {
           </button>
         </div>
       </header>
-
-      {/* Quick Guide Modal for Manual App Installation on Mobile */}
-      {showInstallGuideModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="relative w-full max-w-sm bg-zinc-950 border border-purple-500/40 rounded-2xl p-5 shadow-2xl space-y-4 text-xs">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <div className="flex items-center gap-2 font-bold text-white text-sm">
-                <Smartphone className="w-4 h-4 text-purple-400" />
-                <span>Instalar en tu Móvil (10 segundos)</span>
-              </div>
-              <button
-                onClick={() => setShowInstallGuideModal(false)}
-                className="p-1 rounded-lg text-zinc-400 hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-zinc-300">
-              <p className="font-medium text-zinc-200">
-                Como estás usando un navegador móvil, la forma más rápida y segura sin necesitar ordenador es:
-              </p>
-
-              <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 space-y-2">
-                <span className="font-bold text-purple-300 block">📱 En Android (Google Chrome / Samsung):</span>
-                <ol className="list-decimal list-inside space-y-1 text-zinc-300 text-[11px]">
-                  <li>Toca el botón de los <strong>3 puntos (⋮)</strong> en la esquina superior derecha del navegador.</li>
-                  <li>Selecciona <strong>"Añadir a la pantalla de inicio"</strong> o <strong>"Instalar aplicación"</strong>.</li>
-                  <li>¡Listo! Tendrás el icono directo de TattooStudio en tu teléfono como una App nativa.</li>
-                </ol>
-              </div>
-
-              <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 space-y-2">
-                <span className="font-bold text-indigo-300 block">🍎 En iPhone / iPad (Safari):</span>
-                <ol className="list-decimal list-inside space-y-1 text-zinc-300 text-[11px]">
-                  <li>Toca el botón <strong>Compartir (cuadrado con flecha hacia arriba)</strong>.</li>
-                  <li>Busca y toca <strong>"Añadir a la pantalla de inicio"</strong>.</li>
-                </ol>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setShowInstallGuideModal(false)}
-              className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition-all text-xs"
-            >
-              ¡Entendido!
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Bottom Navigation Bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/80 px-2 py-1.5">
