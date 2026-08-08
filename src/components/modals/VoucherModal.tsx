@@ -51,7 +51,7 @@ export const VoucherModal: React.FC = () => {
         <div className="p-4 bg-gradient-to-r from-purple-950 to-zinc-900 border-b border-zinc-800 flex items-center justify-between">
           <h3 className="text-sm font-black text-white flex items-center gap-2">
             <Gift className="w-4 h-4 text-purple-400" />
-            <span>Emitir Gift Voucher / Bono</span>
+            <span>{settings.language === 'es' ? 'Emitir Gift Voucher / Bono' : 'Issue Gift Voucher'}</span>
           </h3>
           <button
             onClick={() => setIsVoucherModalOpen(false)}
@@ -63,31 +63,35 @@ export const VoucherModal: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="p-4 space-y-3 text-xs">
           <div>
-            <label className="font-bold text-zinc-300 block mb-1">Nombre del Beneficiario</label>
+            <label className="font-bold text-zinc-300 block mb-1">
+              {settings.language === 'es' ? 'Nombre del Beneficiario' : 'Beneficiary Name'}
+            </label>
             <input
               type="text"
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              placeholder="Para quién es el regalo"
+              placeholder={settings.language === 'es' ? 'Para quién es el regalo' : 'Who is the gift for'}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white outline-none focus:border-purple-500"
               required
             />
           </div>
 
           <div>
-            <label className="font-bold text-zinc-300 block mb-1">Comprador / Regalo de</label>
+            <label className="font-bold text-zinc-300 block mb-1">
+              {settings.language === 'es' ? 'Comprador / Regalo de' : 'Purchaser / Gift From'}
+            </label>
             <input
               type="text"
               value={buyerName}
               onChange={(e) => setBuyerName(e.target.value)}
-              placeholder="Quién paga el bono (opcional)"
+              placeholder={settings.language === 'es' ? 'Quién paga el bono (opcional)' : 'Who pays for the voucher (optional)'}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white outline-none focus:border-purple-500"
             />
           </div>
 
           <div>
             <label className="font-bold text-zinc-300 block mb-1">
-              Valor del Bono ({settings.currencySymbol})
+              {settings.language === 'es' ? 'Valor del Bono' : 'Voucher Value'} ({settings.currencySymbol})
             </label>
             <input
               type="number"
@@ -100,7 +104,9 @@ export const VoucherModal: React.FC = () => {
           </div>
 
           <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 text-[11px] text-purple-300">
-            * El bono se emitirá con 180 días de validez y generará automáticamente un registro de ingreso en caja.
+            {settings.language === 'es'
+              ? '* El bono se emitirá con 180 días de validez y generará automáticamente un registro de ingreso en caja.'
+              : '* The voucher will be issued with 180 days validity and will automatically create an income entry.'}
           </div>
 
           <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
@@ -115,7 +121,7 @@ export const VoucherModal: React.FC = () => {
               type="submit"
               className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold shadow-lg shadow-purple-950/50"
             >
-              Emitir Bono
+              {settings.language === 'es' ? 'Emitir Bono' : 'Issue Voucher'}
             </button>
           </div>
         </form>

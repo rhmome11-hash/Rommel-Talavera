@@ -46,7 +46,11 @@ export const TransactionModal: React.FC = () => {
       <div className="relative w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden my-auto">
         <div className="p-4 bg-gradient-to-r from-zinc-900 via-purple-950/40 to-zinc-900 border-b border-zinc-800 flex items-center justify-between">
           <h3 className="text-sm font-black text-white flex items-center gap-2">
-            <span>{type === 'Income' ? 'Registrar Ingreso' : 'Registrar Gasto'}</span>
+            <span>
+              {type === 'Income'
+                ? settings.language === 'es' ? 'Registrar Ingreso' : 'Record Income'
+                : settings.language === 'es' ? 'Registrar Gasto' : 'Record Expense'}
+            </span>
           </h3>
           <button
             onClick={() => setIsTransactionModalOpen(false)}
@@ -72,7 +76,7 @@ export const TransactionModal: React.FC = () => {
               }`}
             >
               <TrendingUp className="w-4 h-4" />
-              <span>Ingreso</span>
+              <span>{t('filterIncome')}</span>
             </button>
             <button
               type="button"
@@ -87,17 +91,23 @@ export const TransactionModal: React.FC = () => {
               }`}
             >
               <TrendingDown className="w-4 h-4" />
-              <span>Gasto</span>
+              <span>{t('filterExpense')}</span>
             </button>
           </div>
 
           <div>
-            <label className="font-bold text-zinc-300 block mb-1">Concepto</label>
+            <label className="font-bold text-zinc-300 block mb-1">
+              {settings.language === 'es' ? 'Concepto' : 'Concept'}
+            </label>
             <input
               type="text"
               value={concept}
               onChange={(e) => setConcept(e.target.value)}
-              placeholder={type === 'Expense' ? 'Ej. Compra de Tintas' : 'Ej. Venta Tatuaje'}
+              placeholder={
+                type === 'Expense'
+                  ? settings.language === 'es' ? 'Ej. Compra de Tintas' : 'e.g. Ink supplies'
+                  : settings.language === 'es' ? 'Ej. Venta Tatuaje' : 'e.g. Tattoo service'
+              }
               className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white outline-none focus:border-purple-500"
               required
             />
@@ -106,7 +116,7 @@ export const TransactionModal: React.FC = () => {
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="font-bold text-zinc-300 block mb-1">
-                Monto ({settings.currencySymbol})
+                {settings.language === 'es' ? 'Monto' : 'Amount'} ({settings.currencySymbol})
               </label>
               <input
                 type="number"
@@ -119,7 +129,9 @@ export const TransactionModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="font-bold text-zinc-300 block mb-1">Fecha</label>
+              <label className="font-bold text-zinc-300 block mb-1">
+                {settings.language === 'es' ? 'Fecha' : 'Date'}
+              </label>
               <input
                 type="date"
                 value={date}
@@ -132,7 +144,9 @@ export const TransactionModal: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="font-bold text-zinc-300 block mb-1">Categoría</label>
+              <label className="font-bold text-zinc-300 block mb-1">
+                {settings.language === 'es' ? 'Categoría' : 'Category'}
+              </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -140,36 +154,38 @@ export const TransactionModal: React.FC = () => {
               >
                 {type === 'Income' ? (
                   <>
-                    <option value="Tattoo Income">Tatuaje</option>
+                    <option value="Tattoo Income">{settings.language === 'es' ? 'Tatuaje' : 'Tattoo'}</option>
                     <option value="Piercing Income">Piercing</option>
-                    <option value="Laser Income">Láser</option>
-                    <option value="Gift Voucher">Venta Bono</option>
-                    <option value="Otros Ingresos">Otros</option>
+                    <option value="Laser Income">{settings.language === 'es' ? 'Láser' : 'Laser'}</option>
+                    <option value="Gift Voucher">{settings.language === 'es' ? 'Venta Bono' : 'Voucher Sale'}</option>
+                    <option value="Otros Ingresos">{settings.language === 'es' ? 'Otros' : 'Others'}</option>
                   </>
                 ) : (
                   <>
-                    <option value="Insumos y Materiales">Insumos y Agujas</option>
-                    <option value="Alquiler Estudio">Alquiler / Licencia</option>
-                    <option value="Mantenimiento Láser">Láser / Máquinas</option>
-                    <option value="Servicios Básicos">Luz / Agua / Internet</option>
-                    <option value="Publicidad">Marketing / RRSS</option>
-                    <option value="Otros Gastos">Otros</option>
+                    <option value="Insumos y Materiales">{settings.language === 'es' ? 'Insumos y Agujas' : 'Supplies & Needles'}</option>
+                    <option value="Alquiler Estudio">{settings.language === 'es' ? 'Alquiler / Licencia' : 'Studio Rent / License'}</option>
+                    <option value="Mantenimiento Láser">{settings.language === 'es' ? 'Láser / Máquinas' : 'Laser / Machines'}</option>
+                    <option value="Servicios Básicos">{settings.language === 'es' ? 'Luz / Agua / Internet' : 'Utilities / Internet'}</option>
+                    <option value="Publicidad">{settings.language === 'es' ? 'Marketing / RRSS' : 'Marketing / Social'}</option>
+                    <option value="Otros Gastos">{settings.language === 'es' ? 'Otros' : 'Others'}</option>
                   </>
                 )}
               </select>
             </div>
 
             <div>
-              <label className="font-bold text-zinc-300 block mb-1">Método de Pago</label>
+              <label className="font-bold text-zinc-300 block mb-1">
+                {settings.language === 'es' ? 'Método de Pago' : 'Payment Method'}
+              </label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                 className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white outline-none focus:border-purple-500"
               >
-                <option value="Card">Tarjeta</option>
-                <option value="Cash">Efectivo</option>
-                <option value="Bizum/Transfer">Bizum / Transferencia</option>
-                <option value="Voucher">Bono / Regalo</option>
+                <option value="Card">{settings.language === 'es' ? 'Tarjeta' : 'Card'}</option>
+                <option value="Cash">{settings.language === 'es' ? 'Efectivo' : 'Cash'}</option>
+                <option value="Bizum/Transfer">{settings.language === 'es' ? 'Bizum / Transferencia' : 'Transfer / Bizum'}</option>
+                <option value="Voucher">{settings.language === 'es' ? 'Bono / Regalo' : 'Voucher'}</option>
               </select>
             </div>
           </div>
@@ -188,7 +204,7 @@ export const TransactionModal: React.FC = () => {
                 type === 'Income' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-red-600 hover:bg-red-500'
               }`}
             >
-              Guardar Transacción
+              {settings.language === 'es' ? 'Guardar Transacción' : 'Save Transaction'}
             </button>
           </div>
         </form>

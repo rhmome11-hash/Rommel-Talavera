@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Calendar, Clock, User, DollarSign, Sparkles } from 'lucide-react';
+import { X, Calendar, Clock, User, DollarSign, Sparkles, Trash2 } from 'lucide-react';
 import { ServiceType } from '../../types';
 
 export const AppointmentModal: React.FC = () => {
@@ -13,33 +13,64 @@ export const AppointmentModal: React.FC = () => {
     setEditingAppointment,
     addAppointment,
     updateAppointment,
+    deleteAppointment,
     addClient,
     t
   } = useApp();
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const [clientId, setClientId] = useState(
-    editingAppointment?.clientId || (clients.length > 0 ? clients[0].id : '')
-  );
+  const [clientId, setClientId] = useState('');
   const [newClientName, setNewClientName] = useState('');
   const [newClientPhone, setNewClientPhone] = useState('');
-  const [isQuickNewClient, setIsQuickNewClient] = useState(clients.length === 0);
+  const [isQuickNewClient, setIsQuickNewClient] = useState(false);
 
-  const [serviceName, setServiceName] = useState(
-    editingAppointment?.serviceName || (settings.services[0]?.name || 'Tatuaje')
-  );
-  const [serviceType, setServiceType] = useState<ServiceType>(
-    editingAppointment?.serviceType || 'Tattoo'
-  );
-  const [date, setDate] = useState(editingAppointment?.date || todayStr);
-  const [startTime, setStartTime] = useState(editingAppointment?.startTime || '12:00');
-  const [endTime, setEndTime] = useState(editingAppointment?.endTime || '13:30');
-  const [price, setPrice] = useState(String(editingAppointment?.price || 100));
-  const [deposit, setDeposit] = useState(String(editingAppointment?.deposit || 20));
-  const [notes, setNotes] = useState(editingAppointment?.notes || '');
+  const [serviceName, setServiceName] = useState('');
+  const [serviceType, setServiceType] = useState<ServiceType>('Tattoo');
+  const [date, setDate] = useState(todayStr);
+  const [startTime, setStartTime] = useState('12:00');
+  const [endTime, setEndTime] = useState('13:30');
+  const [price, setPrice] = useState('100');
+  const [deposit, setDeposit] = useState('20');
+  const [notes, setNotes] = useState('');
+
+  // Sync state when modal opens or editingAppointment changes
+  useEffect(() => {
+    if (editingAppointment) {
+      setClientId(editingAppointment.clientId);
+      setServiceName(editingAppointment.serviceName);
+      setServiceType(editingAppointment.serviceType);
+      setDate(editingAppointment.date);
+      setStartTime(editingAppointment.startTime);
+      setEndTime(editingAppointment.endTime);
+      setPrice(String(editingAppointment.price));
+      setDeposit(String(editingAppointment.deposit));
+      setNotes(editingAppointment.notes || '');
+      setIsQuickNewClient(false);
+    } else {
+      setClientId(clients.length > 0 ? clients[0].id : '');
+      setServiceName(settings.services[0]?.name || 'Tatuaje');
+      setServiceType('Tattoo');
+      setDate(todayStr);
+      setStartTime('12:00');
+      setEndTime('13:30');
+      setPrice('100');
+      setDeposit('20');
+      setNotes('');
+      setIsQuickNewClient(clients.length === 0);
+    }
+  }, [editingAppointment, isAppointmentModalOpen, clients, settings, todayStr]);
 
   if (!isAppointmentModalOpen) return null;
+
+  const handleDelete = () => {
+    if (!editingAppointment) return;
+    if (window.confirm(`¿Estás seguro de que deseas eliminar la cita de ${editingAppointment.clientName}?`)) {
+      deleteAppointment(editingAppointment.id);
+      setIsAppointmentModalOpen(false);
+      setEditingAppointment(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +103,7 @@ export const AppointmentModal: React.FC = () => {
       endTime,
       price: Number(price) || 0,
       deposit: Number(deposit) || 0,
-      status: 'Scheduled' as const,
+      status: editingAppointment ? editingAppointment.status : ('Scheduled' as const),
       notes,
       artistName: settings.artistName
     };
@@ -290,23 +321,38 @@ export const AppointmentModal: React.FC = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2 border-t border-zinc-800">
-            <button
-              type="button"
-              onClick={() => {
-                setIsAppointmentModalOpen(false);
-                setEditingAppointment(null);
-              }}
-              className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 font-bold"
-            >
-              {t('cancel')}
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold shadow-lg shadow-purple-950/50"
-            >
-              {t('save')} Cita
-            </button>
+          <div className="flex items-center justify-between gap-2 pt-2 border-t border-zinc-800">
+            {editingAppointment ? (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-950/60 hover:bg-red-900 border border-red-500/30 text-red-400 font-bold text-xs transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Eliminar Cita</span>
+              </button>
+            ) : (
+              <div />
+            )}
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAppointmentModalOpen(false);
+                  setEditingAppointment(null);
+                }}
+                className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-xs transition-colors"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-950/50 transition-colors"
+              >
+                {editingAppointment ? 'Guardar Cambios' : `${t('save')} Cita`}
+              </button>
+            </div>
           </div>
         </form>
       </div>

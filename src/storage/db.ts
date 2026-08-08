@@ -16,13 +16,25 @@ import {
 } from '../data/initialData';
 
 const KEYS = {
-  CLIENTS: 'tattoostudio_clients_v1',
-  APPOINTMENTS: 'tattoostudio_appointments_v1',
-  TRANSACTIONS: 'tattoostudio_transactions_v1',
-  RECURRING: 'tattoostudio_recurring_v1',
-  VOUCHERS: 'tattoostudio_vouchers_v1',
-  SETTINGS: 'tattoostudio_settings_v1',
+  CLIENTS: 'tattoostudio_clients_v2',
+  APPOINTMENTS: 'tattoostudio_appointments_v2',
+  TRANSACTIONS: 'tattoostudio_transactions_v2',
+  RECURRING: 'tattoostudio_recurring_v2',
+  VOUCHERS: 'tattoostudio_vouchers_v2',
+  SETTINGS: 'tattoostudio_settings_v2',
 };
+
+// Clean up old v1 keys if present
+try {
+  localStorage.removeItem('tattoostudio_clients_v1');
+  localStorage.removeItem('tattoostudio_appointments_v1');
+  localStorage.removeItem('tattoostudio_transactions_v1');
+  localStorage.removeItem('tattoostudio_recurring_v1');
+  localStorage.removeItem('tattoostudio_vouchers_v1');
+  localStorage.removeItem('tattoostudio_settings_v1');
+} catch (e) {
+  // Ignore storage errors in restricted contexts
+}
 
 const getItem = <T>(key: string, defaultValue: T): T => {
   try {

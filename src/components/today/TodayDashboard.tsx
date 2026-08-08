@@ -13,7 +13,9 @@ import {
   Zap,
   ClipboardList,
   CreditCard,
-  Wallet
+  Wallet,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 import { Appointment } from '../../types';
 
@@ -22,6 +24,8 @@ export const TodayDashboard: React.FC = () => {
     settings,
     appointments,
     setIsAppointmentModalOpen,
+    setEditingAppointment,
+    deleteAppointment,
     setIsClientModalOpen,
     setIsTransactionModalOpen,
     setSelectedClientId,
@@ -242,11 +246,37 @@ export const TodayDashboard: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Right: Tag & Arrow */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide ${tag.bg}`}>
+                  {/* Right: Actions, Tag & Arrow */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide ${tag.bg}`}>
                       {tag.label}
                     </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingAppointment(app);
+                        setIsAppointmentModalOpen(true);
+                      }}
+                      className="p-1 rounded-lg bg-zinc-800 hover:bg-purple-600 text-zinc-400 hover:text-white border border-zinc-700/80 transition-all"
+                      title="Editar cita"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm(`¿Deseas eliminar la cita de ${app.clientName}?`)) {
+                          deleteAppointment(app.id);
+                        }
+                      }}
+                      className="p-1 rounded-lg bg-zinc-800 hover:bg-red-600 text-zinc-400 hover:text-white border border-zinc-700/80 transition-all"
+                      title="Eliminar cita"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+
                     <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </div>
